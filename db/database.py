@@ -1,0 +1,99 @@
+# db/database.py
+import sqlite3
+from models.team import Team
+from models.venue import Venue
+
+def get_connection():
+    conn = sqlite3.connect("nfl_data.db")
+    return conn
+
+def create_tables():
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    # Tabelle für Venues erstellen
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS venues (
+            id INTEGER PRIMARY KEY,
+            fullName TEXT,
+            city TEXT,
+            state TEXT,
+            zipCode TEXT,
+            grass BOOLEAN,
+            indoor BOOLEAN
+        )
+    """)
+
+    # Tabelle für Teams erstellen
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS teams (
+            id INTEGER PRIMARY KEY,
+            location TEXT,
+            name TEXT,
+            abbreviation TEXT,
+            displayName TEXT,
+            color TEXT,
+            alternateColor TEXT,
+            isActive BOOLEAN,
+            venue_id INTEGER,
+            FOREIGN KEY (venue_id) REFERENCES venues(id)
+        )
+    """)
+
+    conn.commit()
+    conn.close()
+
+def save_team_and_venue(team: Team, venue: Venue, override=False):
+    create_tables()
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    # Venue speichern
+    if venue:
+        # Überprüfen, ob Venue bereits existiert
+        cursor.execute("SELECT * FROM venues WHERE id = ?", (venue.id,))
+        existing_venue = cursor.fetchone()
+        if existing_venue and not override:
+            print(f"Venue '{venue.fullName}' existiert bereits und wird nicht überschrieben.")
+        else:
+            cursor.execute("""
+                INSERT OR REPLACE INTO venues (id, fullName, city, state, zipCode, grass, indoor)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            """, (
+                venue.id,
+                venue.fullName,
+                venue.city,
+                venue.state,
+                venue.zipCode,
+                venue.grass,
+                venue.indoor
+            ))
+            print(f"Venue '{venue.fullName}' wurde gespeichert.")
+
+    # Team speichern
+    # Überprüfen, ob Team bereits existiert
+    cursor.execute("SELECT * FROM teams WHERE id = ?", (team.id,))
+    existing_team = cursor.fetchone()
+    if existing_team and not override:
+        print(f"Team '{team.displayName}' existiert bereits und wird nicht überschrieben.")
+    else:
+        cursor.execute("""
+            INSERT OR REPLACE INTO teams (
+                id, location, name, abbreviation, displayName, color, alternateColor, isActive, venue_id
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            team.id,
+            team.location,
+            team.name,
+            team.abbreviation,
+            team.displayName,
+            team.color,
+            team.alternateColor,
+            team.isActive,
+            team.venue_id
+        ))
+        print(f"Team '{team.displayName}' wurde gespeichert.")
+
+    conn.commit()
+    conn.close()
