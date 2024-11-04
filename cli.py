@@ -10,13 +10,14 @@ def main_cli(args):
     fetch_parser = subparsers.add_parser("fetch", help="Daten abrufen")
     fetch_subparsers = fetch_parser.add_subparsers(dest="fetch_command")
 
-    # Subparser für 'fetch games'
-    games_parser = fetch_subparsers.add_parser("games", help="Spieldaten abrufen")
-    games_parser.add_argument("--year", type=int, required=True, help="Jahr der Spiele")
-
     # Subparser für 'fetch teams'
     teams_parser = fetch_subparsers.add_parser("teams", help="Teamdaten abrufen")
     teams_parser.add_argument("--override", action="store_true", help="Vorhandene Daten überschreiben")
+    
+    # Subparser for 'fetch games'
+    games_parser = fetch_subparsers.add_parser("games", help="Spieldaten abrufen")
+    games_parser.add_argument("--year", type=int, required=True, help="Jahr der Saison")
+    games_parser.add_argument("--override", action="store_true", help="Vorhandene Daten überschreiben")
 
     parsed_args = parser.parse_args(args)
 
