@@ -1,0 +1,52 @@
+# Python cache files
+__pycache__/
+*/__pycache__/
+*/*/__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+
+# Virtual Environment
+venv/
+env/
+ENV/
+
+# IDE specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Database files
+*.db
+nfl_data.db
+*.sqlite3
+
+# Environment variables
+.env
+.env.local
+
+# Logs
+*.log
+
+# Local development settings
+local_settings.py
+
+# Training data and models
+models_training/data/
+predictions/
+*.model
+*.pkl
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Project specific
+_pycache_/
+cli:python-312.pyc
+*.pyc

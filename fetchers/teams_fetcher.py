@@ -1,6 +1,5 @@
-# fetchers/teams_fetcher.py
 import requests
-from db import database
+from db import save
 from models.team import Team
 from models.venue import Venue
 
@@ -37,7 +36,7 @@ def fetch_teams(override=False):
                             print(f"Kein Venue-Link für Team {team.displayName} vorhanden.")
 
                     # Speichern in der Datenbank
-                    database.save_team_and_venue(team, venue, override)
+                    save.save_team_and_venue(team, venue, override)
                     print(f"Team '{team.displayName}' wurde erfolgreich gespeichert.")
                 else:
                     print(f"Fehler beim Abrufen des Teams: {team_ref}")
